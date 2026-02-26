@@ -23,7 +23,7 @@ Implementar e evoluir uma calculadora estática que:
   - manter: `GET`
   - ganhar: `GET + ajuste`
 - Macros:
-  - proteínas: `2 g/kg`
+  - proteínas: customizável em `g/kg` (padrão `2`)
   - gorduras: `1 g/kg`
   - carboidratos: calorias restantes dividido por `4`
 - Percentual de macros com base nas calorias de cada macro.

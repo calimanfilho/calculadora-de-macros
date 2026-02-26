@@ -9,6 +9,7 @@ const alturaEl = document.querySelector("#altura");
 const idadeEl = document.querySelector("#idade");
 const atividadeEl = document.querySelector("#atividade");
 const objetivoEl = document.querySelector("#objetivo");
+const proteinaPorKgEl = document.querySelector("#proteina-kg");
 const ajusteKcalEl = document.querySelector("#ajuste-kcal");
 const ajusteLabelEl = document.querySelector("#ajuste-label");
 const ajusteHintEl = document.querySelector("#ajuste-hint");
@@ -97,6 +98,10 @@ function renderResultado(resultado) {
         <span class="metric-value">${formatarNumero(resultado.metaCalorica)} kcal</span>
       </div>
       <div class="metric-row">
+        <span class="metric-label">Proteína alvo</span>
+        <span class="metric-value">${formatarNumero(resultado.proteinaPorKg, 1)} g/kg</span>
+      </div>
+      <div class="metric-row">
         <span class="metric-label">IMC</span>
         <span class="metric-value">${formatarNumero(resultado.imc)} (${resultado.classificacaoImc})</span>
       </div>
@@ -183,6 +188,7 @@ function exportarCsv(resultado) {
     ["Data", resultado.dataHora],
     ["Formula", resultado.formulaLabel],
     ["Objetivo", objetivoLabel(resultado.objetivo)],
+    ["Proteina por kg (g)", resultado.proteinaPorKg.toFixed(2)],
     ["TMB (kcal)", resultado.tmb.toFixed(2)],
     ["GET (kcal)", resultado.get.toFixed(2)],
     ["Meta calorica (kcal)", resultado.metaCalorica.toFixed(2)],
@@ -233,6 +239,7 @@ function recarregarConsultaHistorico(index) {
   idadeEl.value = consulta.idade;
   atividadeEl.value = consulta.atividade;
   objetivoEl.value = consulta.objetivo;
+  proteinaPorKgEl.value = consulta.proteinaPorKg;
   ajusteKcalEl.value = consulta.ajusteKcal;
 
   atualizarContextoAjuste();
@@ -260,6 +267,7 @@ function validarEntradas({
   idade,
   atividade,
   objetivo,
+  proteinaPorKg,
   ajusteKcal,
 }) {
   if (!sexo || !atividade || !objetivo || !formula) {
@@ -279,6 +287,10 @@ function validarEntradas({
 
   if (Number.isNaN(ajusteKcal) || ajusteKcal < 0) {
     return "Informe um ajuste calórico válido (0 ou maior).";
+  }
+
+  if (Number.isNaN(proteinaPorKg) || proteinaPorKg <= 0) {
+    return "Informe uma quantidade de proteína por kg válida.";
   }
 
   return null;
@@ -334,6 +346,7 @@ form.addEventListener("submit", (event) => {
   const idade = Number(idadeEl.value);
   const atividade = atividadeEl.value;
   const objetivo = objetivoEl.value;
+  const proteinaPorKg = Number(proteinaPorKgEl.value);
   const ajusteKcal = Number(ajusteKcalEl.value);
 
   const erroValidacao = validarEntradas({
@@ -344,6 +357,7 @@ form.addEventListener("submit", (event) => {
     idade,
     atividade,
     objetivo,
+    proteinaPorKg,
     ajusteKcal,
   });
 
@@ -367,7 +381,11 @@ form.addEventListener("submit", (event) => {
     ajusteKcal
   );
 
-  const macros = window.CalculadoraMacros.calcularMacros(metaCalorica, peso);
+  const macros = window.CalculadoraMacros.calcularMacros(
+    metaCalorica,
+    peso,
+    proteinaPorKg
+  );
 
   if (macros.carboidratoGramas < 0) {
     renderErro(
@@ -398,6 +416,7 @@ form.addEventListener("submit", (event) => {
     idade,
     atividade,
     objetivo,
+    proteinaPorKg,
     ajusteKcal,
     faixaAjuste: window.CalculadoraMacros.calcularFaixaAjuste(objetivo),
     tmb,
@@ -422,6 +441,7 @@ form.addEventListener("submit", (event) => {
 btnLimpar.addEventListener("click", () => {
   form.reset();
   formulaEl.value = "harris-benedict";
+  proteinaPorKgEl.value = "2";
   ajusteKcalEl.value = "400";
   atualizarContextoAjuste();
   limparTelaResultado();

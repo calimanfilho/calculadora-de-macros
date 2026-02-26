@@ -61,6 +61,17 @@ test("calcula macros em gramas e kcal", () => {
   assert.equal(macros.carboidratoGramas, 202.5);
 });
 
+test("calcula macros com proteina por kg customizada", () => {
+  const macros = calcularMacros(2000, 70, 2.2);
+
+  assert.equal(macros.proteinaGramas, 154);
+  assert.equal(macros.gorduraGramas, 70);
+  assert.equal(macros.proteinaKcal, 616);
+  assert.equal(macros.gorduraKcal, 630);
+  assert.equal(macros.carboidratoKcal, 754);
+  assert.equal(macros.carboidratoGramas, 188.5);
+});
+
 test("calcula percentual de macros", () => {
   const macros = {
     proteinaKcal: 560,

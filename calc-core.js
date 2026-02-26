@@ -35,8 +35,8 @@
     return get;
   }
 
-  function calcularMacros(metaCalorica, peso) {
-    const proteinaGramas = peso * 2;
+  function calcularMacros(metaCalorica, peso, proteinaPorKg = 2) {
+    const proteinaGramas = peso * proteinaPorKg;
     const gorduraGramas = peso * 1;
 
     const proteinaKcal = proteinaGramas * 4;
